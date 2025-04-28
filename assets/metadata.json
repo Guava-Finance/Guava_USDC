@@ -3,10 +3,11 @@
     "symbol": "gUSDC",
     "description": "US Dollar coin on Guava",
     "image": "https://res.cloudinary.com/oghenekparobor/image/upload/v1745848602/Guava/kf9ldz7uwoqtgp3tkeq0.png",
+    "external_url": "https://gfi-tau.vercel.app",
     "attributes": [
-      {
-        "trait_type": "Item",
-        "value": "Developer Portal"
-      }
+        {
+            "trait_type": "Category",
+            "value": "Stablecoin"
+        }
     ]
-  }
+}
