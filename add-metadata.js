@@ -1,67 +1,47 @@
-const { Connection, clusterApiUrl, Keypair, PublicKey, Transaction, sendAndConfirmTransaction } = require('@solana/web3.js');
-const { createCreateMetadataAccountV3Instruction } = require('@metaplex-foundation/mpl-token-metadata');
+const { Connection, clusterApiUrl, Keypair, PublicKey } = require('@solana/web3.js');
+const { Metaplex } = require('@metaplex-foundation/js');
 const fs = require('fs');
 
 async function addMetadata() {
-    // Load keypair from file
-    const keypairFile = JSON.parse(fs.readFileSync('/Users/oghenekparobor/.config/solana/id.json', 'utf8'));
-    const keypair = Keypair.fromSecretKey(new Uint8Array(keypairFile));
-
-    // Connect to network
-    const connection = new Connection(clusterApiUrl('devnet'));
-
-    // Your token mint address
-    const mintAddress = new PublicKey('HGeLyusZNbG6bZ1RBi3W9fKV6gjZv6soVxoXBbSeuHSk');
-
-    // Derive metadata PDA
-    const metadataProgramId = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
-    const [metadataAccount] = PublicKey.findProgramAddressSync(
-        [
-            Buffer.from('metadata'),
-            metadataProgramId.toBuffer(),
-            mintAddress.toBuffer(),
-        ],
-        metadataProgramId
-    );
-
-    // Create metadata
-    const metadataInstruction = createCreateMetadataAccountV3Instruction(
-        {
-            metadata: metadataAccount,
-            mint: mintAddress,
-            mintAuthority: keypair.publicKey,
-            payer: keypair.publicKey,
-            updateAuthority: keypair.publicKey,
-        },
-        {
-            createMetadataAccountArgsV3: {
-                data: {
-                    name: 'Guava USDC',
-                    symbol: 'gUSDC',
-                    uri: 'https://github.com/Guava-Finance/Guava_USDC/blob/main/assets/metadata.json',
-                    sellerFeeBasisPoints: 0,
-                    creators: null,
-                    collection: null,
-                    uses: null,
-                },
-                isMutable: true,
-                collectionDetails: null
-            }
-        }
-    );
-
-    const transaction = new Transaction().add(metadataInstruction);
-
     try {
-        const signature = await sendAndConfirmTransaction(
-            connection,
-            transaction,
-            [keypair]
-        );
+        // Load keypair from file
+        const keypairFile = JSON.parse(fs.readFileSync('/Users/oghenekparobor/.config/solana/id.json', 'utf8'));
+        const keypair = Keypair.fromSecretKey(new Uint8Array(keypairFile));
+
+        // Connect to network
+        const connection = new Connection(clusterApiUrl('devnet'));
+        
+        // Create Metaplex instance with keypair identity
+        const metaplex = Metaplex.make(connection).use(keypairIdentity(keypair));
+
+        // Your token mint address - REPLACE THIS WITH YOUR ACTUAL TOKEN MINT ADDRESS
+        const mintAddress = new PublicKey('HGeLyusZNbG6bZ1RBi3W9fKV6gjZv6soVxoXBbSeuHSk');
+
+        console.log('Creating metadata for token:', mintAddress.toString());
+        console.log('Using wallet:', keypair.publicKey.toString());
+
+        console.log('Creating metadata for token:', mintAddress.toString());
+        console.log('Using wallet:', keypair.publicKey.toString());
+
+        // Create metadata
+        const { nft } = await metaplex.nfts().create({
+            uri: 'https://raw.githubusercontent.com/Guava-Finance/Guava_USDC/main/assets/metadata.json',
+            name: 'Guava USDC',
+            symbol: 'gUSDC',
+            sellerFeeBasisPoints: 0, // No royalties
+            useNewMint: false, // Use existing mint
+            mintAddress: mintAddress,
+        });
+
         console.log('Metadata added successfully!');
-        console.log('Transaction signature:', signature);
+        console.log('NFT/Token address:', nft.address.toString());
+        console.log('Metadata address:', nft.metadataAddress.toString());
     } catch (error) {
         console.error('Error adding metadata:', error);
+        // More detailed error debugging
+        if (error.logs) {
+            console.error('Transaction logs:', error.logs);
+        }
     }
 }
 
