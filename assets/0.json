@@ -1,13 +1,12 @@
 {
     "name": "Guava USDC",
     "symbol": "gUSDC",
-    "description": "US Dollar coin on Guava",
-    "image": "https://res.cloudinary.com/oghenekparobor/image/upload/v1745848602/Guava/kf9ldz7uwoqtgp3tkeq0.png",
-    "external_url": "https://gfi-tau.vercel.app",
-    "attributes": [
+    "uri": "https://github.com/Guava-Finance/Guava_USDC/blob/main/assets/metadata.json",
+    "seller_fee_basis_points": 0,
+    "creators": [
         {
-            "trait_type": "Category",
-            "value": "Stablecoin"
+            "address": "9pjCmaMBddGD8vbREj92fWaXfQeR3iYU3a3S9ajerhfh",
+            "share": 100
         }
     ]
 }
