@@ -11,7 +11,7 @@ async function addMetadata() {
     const connection = new Connection(clusterApiUrl('devnet'));
 
     // Your token mint address
-    const mintAddress = new PublicKey('YOUR_TOKEN_MINT_ADDRESS');
+    const mintAddress = new PublicKey('HGeLyusZNbG6bZ1RBi3W9fKV6gjZv6soVxoXBbSeuHSk');
 
     // Derive metadata PDA
     const metadataProgramId = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
